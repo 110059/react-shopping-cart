@@ -1,48 +1,58 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import styled from 'styled-components';
-import {Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types'
+import { ProductConsumer} from '../context';
 
 class Product extends Component {
-   render() {
-    const {id, title, img, price, company, info, inCart } = this.props.product;
-       return (
-           <ProductWraper className="col-9 col-md-6 col-lg-3 mx-auto">
-               <div className="card">
-                    <div class="img-container p-5" onClick={ () => console.log('yu clicked the image')}>
-                    <Link to="/details">
-                        <img src={img} alt={title} className="card-img-top" />
-                    </Link>                   
-                    <button
-                        className="cart-btn"
-                        disabled={inCart ? true : false}
-                        onClick={() => {
-                            console.log('click')
-                        }}
-                    >
-                    {inCart ? (
-                        <p className="text-capitalize mb-0" disabled>
-                        In Cart
-                        </p>
-                    ) : (
-                        <i className="fas fa-cart-plus" />
-                    )}
-                  </button>
-                  </div>
+    render() {
+        const { id, title, img, price, company, info, inCart } = this.props.product;
+        return (
+            <ProductWraper className="col-9 col-md-6 col-lg-3 mx-auto">
+                <div className="card">
+                    <ProductConsumer>
+                        {
+                            (value) => (
+                                <div>
+                                    <div className="img-container p-5" onClick={() => value.handleDetail(id)}>
+                                        <Link to="/details">
+                                            <img src={img} alt={title} className="card-img-top" />
+                                        </Link>
+                                        <button
+                                            className="cart-btn"
+                                            disabled={inCart ? true : false}
+                                            onClick={() => {
+                                                value.addToCart(id);
+                                                value.openModal(id);
+                                            }}
+                                        >
+                                            {inCart ? (
+                                                <p className="text-capitalize mb-0" disabled>
+                                                    In Cart
+                               </p>
+                                            ) : (
+                                                    <i className="fas fa-cart-plus" />
+                                                )}
+                                        </button>
+                                    </div>
 
-                  {/* card footer */}
-                  <div className="card-footer d-flex justify-content-between">
-                     <p className="align-self-center mb-0">{title}</p>
-                    <h5 className="text-blue font-italic mb-0">
-                       <span class="mr-1">$</span>
-                       {price}
-                    </h5>
-                  </div>
+                                    <div className="card-footer d-flex justify-content-between">
+                                        <p className="align-self-center mb-0">{title}</p>
+                                        <h5 className="text-blue font-italic mb-0">
+                                            <span className="mr-1">$</span>
+                                            {price}
+                                        </h5>
+                                    </div>
+                                </div>
+                            )
+                        }
 
-               </div>
-           </ProductWraper>
-       )
-   }
+                    </ProductConsumer>
+                </div>
+
+            </ProductWraper>
+        )
+    }
 }
 
 Product.propTypes = {
@@ -53,8 +63,8 @@ Product.propTypes = {
         price: PropTypes.number,
         inCart: PropTypes.bool
     }).isRequired
-  };
-  
+};
+
 
 const ProductWraper = styled.div`
     .card {
